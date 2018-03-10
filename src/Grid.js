@@ -13,6 +13,7 @@ const Grid = props => {
   for (var row_index = 0; row_index < props.rows; row_index++) {
     for (var col_index = 0; col_index < props.cols; col_index++) {
       let boxId = `${row_index}-${col_index}`;
+      console.log('row', row_index);
       // test the bool of each box and put the corresponding class
       let boxClass = props.gridFull[row_index][col_index]
         ? "box on"

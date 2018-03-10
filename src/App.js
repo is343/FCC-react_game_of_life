@@ -25,9 +25,14 @@ class App extends Component {
 
   emptyBoard = (rows, cols) => {
     // creates a board array with all blank (fasle) boxes
+    // updates state with a new blank board
+    // ints -> array / -update state-
     let blankBoard = Array(rows)
       .fill()
       .map(() => Array(cols).fill(false));
+    this.setState({
+      gridFull: blankBoard
+    })
     return blankBoard;
   };
 
@@ -73,11 +78,13 @@ class App extends Component {
         let count = 0;
         if (row > 0) if (grid[row - 1][col]) count++;
         if (row > 0 && col > 0) if (grid[row - 1][col - 1]) count++;
-        if (row > 0 && col < this.state.cols - 1) if (grid[row - 1][col + 1]) count++;
+        if (row > 0 && col < this.state.cols - 1)
+          if (grid[row - 1][col + 1]) count++;
         if (col < this.state.cols - 1) if (grid[row][col + 1]) count++;
         if (col > 0) if (grid[row][col - 1]) count++;
         if (row < this.state.rows - 1) if (grid[row + 1][col]) count++;
-        if (row < this.state.rows - 1 && col > 0) if (grid[row + 1][col - 1]) count++;
+        if (row < this.state.rows - 1 && col > 0)
+          if (grid[row + 1][col - 1]) count++;
         if (row < this.state.rows - 1 && this.state.cols - 1)
           if (grid[row + 1][col + 1]) count++;
         if (grid[row][col] && (count < 2 || count > 3))
@@ -92,10 +99,11 @@ class App extends Component {
     });
   };
 
-  seedGrid = blankGrid => {
+  seedGrid = async () => {
     // seed the grid with a 1/4 chance of a box being active
     // an empty array => -update state-
-    let gridCopy = this.arrayClone(blankGrid);
+    let emptyGrid = this.emptyBoard(this.state.rows, this.state.cols);
+    let gridCopy = await this.arrayClone(emptyGrid);
     for (let row = 0; row < this.state.rows; row++) {
       for (let col = 0; col < this.state.cols; col++) {
         if (Math.floor(Math.random() * 4) === 1) {
@@ -111,7 +119,7 @@ class App extends Component {
   };
 
   updateHistory = gridToUpdate => {
-    // updates the history of all generattions
+    // updates the history of all generations
     // array of arrays => updates state
     let updatedHistory = this.arrayClone(this.state.generationHistory);
     updatedHistory.push(gridToUpdate);
@@ -129,7 +137,7 @@ class App extends Component {
 
   handlePrevGeneration = generation => {
     // reverts the board to the most recent update in the history
-    // int => --updat state--
+    // int => --update state--
     this.handlePauseButton();
     if (generation === 0) {
       return null;
@@ -158,26 +166,27 @@ class App extends Component {
   handleRandomBoard = () => {
     // randomizes board and updates state,
     this.handlePauseButton();
-    let emptyGrid = this.emptyBoard(this.state.rows, this.state.cols);
     this.setState({
       generations: 0,
       generationHistory: []
     });
-    this.seedGrid(emptyGrid);
+    this.seedGrid();
   };
 
-  handleSizeSpeedUpdate = (rows, cols, speed) => {
+  handleSizeSpeedUpdate = async (rows, cols, speed) => {
+    // async needed for <Grid /> when it's processed
+    // ints -> -update state-
     this.setState({
       rows: rows,
       cols: cols,
       speed: speed
     });
-    let emptyGrid = this.emptyBoard(rows, cols);
-    this.seedGrid(emptyGrid);
+    await this.emptyBoard(rows, cols);
+    this.seedGrid();
   };
 
   componentDidMount() {
-    this.seedGrid(this.state.gridFull);
+    this.seedGrid();
   }
 
   render() {
@@ -197,16 +206,16 @@ class App extends Component {
           rows={this.state.rows}
           cols={this.state.cols}
         />
+        <h2>
+          Generations: {this.state.generations} | Rows: {this.state.rows} |
+          Cols: {this.state.cols} | Speed (in ms): {this.state.speed}{" "}
+        </h2>
         <Grid
           gridFull={this.state.gridFull}
           rows={this.state.rows}
           cols={this.state.cols}
           onBoxSelect={this.handleBoxSelect}
         />
-        <h2>
-          Generations: {this.state.generations} Rows: {this.state.rows} Cols:{" "}
-          {this.state.cols} Speed (in ms): {this.state.speed}{" "}
-        </h2>
       </div>
     );
   }
