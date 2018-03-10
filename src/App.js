@@ -58,18 +58,16 @@ class App extends Component {
     clearInterval(this.intervalId);
   };
 
-  play = () => {
+  play = async () => {
     // the main function that computes and plays out generations
     // checks every square with current grid, and creates a
     // new grid that will be used to update state
     // per each generation
     let grid = this.state.gridFull;
     // test if starting from a new empty/custom grid
-    //doesn't work currently but I'm leaving this in
+    // update with the incoming grid before the later newGrid update
     if (this.state.generationHistory.length < 1) {
-      this.setState({
-        generationHistory: [grid]
-      });
+      await this.updateHistory(grid);
     }
     let newGrid = this.arrayClone(this.state.gridFull);
 
@@ -111,14 +109,13 @@ class App extends Component {
         }
       }
     }
-    // this.updateHistory(gridCopy);
     this.setState({
       gridFull: gridCopy,
       generationHistory: [gridCopy]
     });
   };
 
-  updateHistory = gridToUpdate => {
+  updateHistory = (gridToUpdate) => {
     // updates the history of all generations
     // array of arrays => updates state
     let updatedHistory = this.arrayClone(this.state.generationHistory);
