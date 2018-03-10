@@ -1,0 +1,37 @@
+.box {
+  display: inline-block;
+  border: 1px solid black;
+  width: 15px;
+  height: 15px;
+  margin: 0 0 -1px -1px;
+}
+
+.off {
+  background-color: lightgray;
+}
+
+.on {
+  background-color: green;
+}
+
+.box:hover {
+  background-color: greenyellow;
+}
+
+.center {
+  margin: auto;
+  display: table;
+  margin-top: 10px;
+}
+
+.grid {
+  width: 150px;
+  line-height: 0;
+  margin: auto;
+  box-shadow: 0px 0px 20px white;
+  margin-top: 20px;
+}
+
+body {
+  background-color: pink;
+}
