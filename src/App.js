@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.speed = 300;
-    this.rows = 40;
+    this.rows = 30;
     this.cols = 50;
 
     this.state = {
@@ -25,9 +25,9 @@ class App extends Component {
 
   emptyBoard = (rows, cols) => {
     // creates a board array with all blank (fasle) boxes
-    let blankBoard = Array(this.rows)
+    let blankBoard = Array(rows)
       .fill()
-      .map(() => Array(this.cols).fill(false));
+      .map(() => Array(cols).fill(false));
     return blankBoard;
   };
 
@@ -68,17 +68,17 @@ class App extends Component {
     }
     let newGrid = this.arrayClone(this.state.gridFull);
 
-    for (let row = 0; row < this.rows; row++) {
-      for (let col = 0; col < this.cols; col++) {
+    for (let row = 0; row < this.state.rows; row++) {
+      for (let col = 0; col < this.state.cols; col++) {
         let count = 0;
         if (row > 0) if (grid[row - 1][col]) count++;
         if (row > 0 && col > 0) if (grid[row - 1][col - 1]) count++;
-        if (row > 0 && col < this.cols - 1) if (grid[row - 1][col + 1]) count++;
-        if (col < this.cols - 1) if (grid[row][col + 1]) count++;
+        if (row > 0 && col < this.state.cols - 1) if (grid[row - 1][col + 1]) count++;
+        if (col < this.state.cols - 1) if (grid[row][col + 1]) count++;
         if (col > 0) if (grid[row][col - 1]) count++;
-        if (row < this.rows - 1) if (grid[row + 1][col]) count++;
-        if (row < this.rows - 1 && col > 0) if (grid[row + 1][col - 1]) count++;
-        if (row < this.rows - 1 && this.cols - 1)
+        if (row < this.state.rows - 1) if (grid[row + 1][col]) count++;
+        if (row < this.state.rows - 1 && col > 0) if (grid[row + 1][col - 1]) count++;
+        if (row < this.state.rows - 1 && this.state.cols - 1)
           if (grid[row + 1][col + 1]) count++;
         if (grid[row][col] && (count < 2 || count > 3))
           newGrid[row][col] = false;
@@ -147,7 +147,7 @@ class App extends Component {
   handleClearBoard = () => {
     // clears the board and updates state
     this.handlePauseButton();
-    let emptyGrid = this.emptyBoard(this.rows, this.cols);
+    let emptyGrid = this.emptyBoard(this.state.rows, this.state.cols);
     this.setState({
       gridFull: emptyGrid,
       generations: 0,
@@ -158,7 +158,7 @@ class App extends Component {
   handleRandomBoard = () => {
     // randomizes board and updates state,
     this.handlePauseButton();
-    let emptyGrid = this.emptyBoard(this.rows, this.cols);
+    let emptyGrid = this.emptyBoard(this.state.rows, this.state.cols);
     this.setState({
       generations: 0,
       generationHistory: []
@@ -172,6 +172,8 @@ class App extends Component {
       cols: cols,
       speed: speed
     });
+    let emptyGrid = this.emptyBoard(rows, cols);
+    this.seedGrid(emptyGrid);
   };
 
   componentDidMount() {
